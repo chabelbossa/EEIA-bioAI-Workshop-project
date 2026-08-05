@@ -35,7 +35,8 @@ def distillation_loss(student_logits, teacher_logits, labels,
 
 
 def train_student(student, teacher_logits, inputs, labels, epochs=20, lr=1e-3,
-                   temperature=4.0, alpha=0.5, device="cpu", batch_size=256):
+                   temperature=4.0, alpha=0.5, device="cpu", batch_size=256,
+                   log_every=10):
     """inputs: tenseur déjà transformé en caractéristiques pour le student (vecteurs
     k-mer ou fenêtres one-hot). teacher_logits: précalculés une fois, dans le même ordre
     que inputs.
@@ -50,8 +51,16 @@ def train_student(student, teacher_logits, inputs, labels, epochs=20, lr=1e-3,
            - calculez la perte avec distillation_loss(s_logits, t_logits, y, temperature, alpha)
            - rétropropagez, faites un pas d'optimisation
            - accumulez epoch_loss += loss.item() * len(idx)
-      3. Ajoutez la perte moyenne de l'époque à history["loss"]
-      4. Retournez (student, history)
+           - accumulez aussi les bonnes prédictions :
+             epoch_correct += ((s_logits > 0).float() == y).sum().item()
+      3. Ajoutez la perte moyenne de l'époque à history["loss"], et la proportion de
+         bonnes prédictions à history["accuracy"]
+      4. Toutes les `log_every` époques, affichez où en est l'entraînement, par ex. :
+             print(f"epoch {epoch + 1:3d}/{epochs} | loss={avg_loss:.4f} "
+                   f"| acc={epoch_correct / n:.4f}")
+         (sans affichage on ne voit rien pendant 100 époques — c'est ce qui permet
+          de repérer une perte qui stagne ou qui diverge)
+      5. Retournez (student, history)
     """
-    history = {"loss": []}
+    history = {"loss": [], "accuracy": []}
     raise NotImplementedError("TODO : implémentez train_student")
