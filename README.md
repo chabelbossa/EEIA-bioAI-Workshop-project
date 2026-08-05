@@ -6,6 +6,26 @@ jusqu'à un classifieur minuscule distillé depuis un modèle de fondation géno
 <!-- Auteur : Généreux Akotenou: PhD student, BioinformaticLabs College of Computing / UM6P
 · [dépôt GitHub](https://github.com/Genereux-akotenou/EEIA-bioAI-Workshop) -->
 
+<div align="center">
+
+### 🎓 &nbsp;DÉPÔT DU CODE ÉTUDIANT&nbsp; 🎓
+
+<a href="https://github.com/Genereux-akotenou/EEIA-bioAI-Workshop-project">
+<img src="https://img.shields.io/badge/GitHub-EEIA--bioAI--Workshop--project-2ea44f?style=for-the-badge&logo=github&logoColor=white" alt="Dépôt étudiant">
+</a>
+
+**👉 &nbsp;<https://github.com/Genereux-akotenou/EEIA-bioAI-Workshop-project>&nbsp; 👈**
+
+```bash
+git clone https://github.com/Genereux-akotenou/EEIA-bioAI-Workshop-project.git
+```
+
+*C'est le dépôt à cloner pour suivre l'atelier.*
+*Les embeddings Evo2 se téléchargent séparément —*
+*voir [`2-data/embeddings/README.md`](2-data/embeddings/README.md).*
+
+</div>
+
 ---
 
 ## 1. Commencez par lire le guide
