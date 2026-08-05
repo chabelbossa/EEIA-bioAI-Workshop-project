@@ -1,0 +1,20 @@
+# Evo2 embedding dumps are single files of 100+ MB, past GitHub's file size
+# limit, so they live on Drive — see 2-data/embeddings/README.md
+# raw/ and processed/ stay in git: no individual file there exceeds 16 MB.
+2-data/embeddings/*
+!2-data/embeddings/README.md
+
+data/autoencoder/
+temp_chunk_of_code_will_be_deleted/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# Secrets
+.env
+*api_key*
+.DS_Store

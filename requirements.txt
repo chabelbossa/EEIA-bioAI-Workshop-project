@@ -1,0 +1,12 @@
+# EEIA — bioAI Workshop
+# pip install -r requirements.txt
+numpy
+pandas
+scikit-learn
+torch
+matplotlib
+umap-learn
+requests
+tqdm
+jupyter
+ipykernel
