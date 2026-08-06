@@ -2,9 +2,9 @@
 
 Trop volumineux pour GitHub, ils sont donc hébergés sur Google Drive.
 
-> ### [**Télécharger les embeddings**](https://drive.google.com/drive/folders/1TL1p0ezAXUrGORAoHr7aVtc0YcxE-5ve?usp=drive_link)
+> ### [**Télécharger les embeddings**](https://drive.google.com/drive/folders/1iFrAkKPDufgELnrocB8-CRPHyfu2gRdq?usp=sharing)
 
-[Cliquez ici pour télécharger les données : https://drive.google.com/drive/folders/1TL1p0ezAXUrGORAoHr7aVtc0YcxE-5ve?usp=drive_link](https://drive.google.com/drive/folders/1TL1p0ezAXUrGORAoHr7aVtc0YcxE-5ve?usp=drive_link)
+[Cliquez ici pour télécharger les données : https://drive.google.com/drive/folders/1iFrAkKPDufgELnrocB8-CRPHyfu2gRdq?usp=sharing](https://drive.google.com/drive/folders/1iFrAkKPDufgELnrocB8-CRPHyfu2gRdq?usp=sharing)
 
 Placez les trois fichiers dans ce dossier :
 

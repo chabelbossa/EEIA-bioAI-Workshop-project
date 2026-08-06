@@ -51,7 +51,7 @@ class TopKSparseAutoencoder(nn.Module):
 
 
 def train_sae(sae, activations: torch.Tensor, epochs=10, lr=2e-4,
-              batch_size=512, device="cpu"):
+              batch_size=512, device="cpu", log_every=1):
     """activations: tenseur (N, d_in), déjà chargé/sous-échantillonné en mémoire — prévu
     pour quelques milliers à dizaines de milliers de vecteurs, pas le dump complet
     multi-Go.
@@ -65,8 +65,15 @@ def train_sae(sae, activations: torch.Tensor, epochs=10, lr=2e-4,
          - loss = F.mse_loss(x_hat, x)
          - rétropropagez, faites un pas d'optimisation
          - accumulez epoch_loss += loss.item() * x.shape[0]
-      3. Ajoutez la perte moyenne à history["recon_loss"], affichez-la
-      4. Retournez (sae, history)
+      3. Ajoutez la perte moyenne à history["recon_loss"]
+      4. Suivez aussi la santé du dictionnaire, et affichez-la toutes les
+         `log_every` époques :
+           - variance expliquée : 1 - recon_loss / activations.var()
+           - caractéristiques « vivantes » : part des colonnes de W activées au
+             moins une fois dans l'époque, via (f > 0).any(dim=0)
+         (une perte qui baisse pendant que 95 % du dictionnaire est mort, c'est un
+          SAE qui a échoué — la perte seule ne le dirait pas)
+      5. Retournez (sae, history)
     """
-    history = {"recon_loss": []}
+    history = {"recon_loss": [], "alive_frac": [], "explained_var": []}
     raise NotImplementedError("TODO : implémentez train_sae")

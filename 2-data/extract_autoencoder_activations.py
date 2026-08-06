@@ -234,6 +234,16 @@ def main():
             fh.write(kept.tobytes())
             fh.flush()
 
+            # provenance : de quel génome/contig/position vient chaque bloc de lignes.
+            # Sans cela, impossible de savoir qu'une tranche de acts.dat est
+            # continue — le fichier est une concaténation de fenêtres disjointes.
+            state.setdefault("windows", []).append({
+                "row_start": state["total_tokens"],
+                "n_rows": int(kept.shape[0]),
+                "file": w["file"], "contig": w["contig"],
+                "genome_start": int(w["start"]),
+                "genome_end": int(w["start"] + args.window),
+            })
             state["windows_done"] = i + 1
             state["total_tokens"] += kept.shape[0]
             state["d_model"] = d_model
@@ -249,6 +259,9 @@ def main():
                 "token_stride": args.token_stride,
                 "windows_done": state["windows_done"],
                 "labels": None,   # aucune étiquette : apprentissage non supervisé
+                # une tranche de acts.dat n'est CONTINUE que si elle reste dans
+                # un seul de ces blocs (voir contiguous_slice dans probe.py)
+                "windows": state["windows"],
             })
 
             done, tot = i + 1, len(windows)

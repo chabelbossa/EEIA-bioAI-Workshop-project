@@ -18,3 +18,9 @@ venv/
 .env
 *api_key*
 .DS_Store
+2-data/autoencoder/**
+!2-data/autoencoder/README.md
+2-data/embeddings/**
+!2-data/embeddings/README.md
+2-data/probe/**
+!2-data/probe/README.md
