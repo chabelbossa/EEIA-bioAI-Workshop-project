@@ -10,6 +10,7 @@ pour le teacher, ou latents SAE pour la piste bonus).
 **À COMPLÉTER** : la classe `MLPHead` ci-dessous.
 """
 
+# pyrefly: ignore [missing-import]
 import torch.nn as nn
 
 
@@ -21,8 +22,12 @@ class MLPHead(nn.Module):
         super().__init__()
         # TODO : construisez self.net, un nn.Sequential avec :
         #   Linear(d_in, d_hidden) -> ReLU -> Dropout(dropout) -> Linear(d_hidden, 1)
-        raise NotImplementedError("TODO : construisez l'architecture de la tête MLP")
+        self.net = nn.Sequential(
+            nn.Linear(d_in, d_hidden),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(d_hidden, 1)
+        )
 
     def forward(self, x):  # x: (B, d_in)
-        # TODO : return self.net(x).squeeze(-1)  # (B,) logits
-        raise NotImplementedError("TODO : implémentez le forward")
+        return self.net(x).squeeze(-1)  # (B,) logits

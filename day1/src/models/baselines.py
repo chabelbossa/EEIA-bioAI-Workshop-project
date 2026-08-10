@@ -13,18 +13,19 @@ import torch
 import torch.nn as nn
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 
 def make_kmer_classifier(kind: str = "logreg"):
-    """kind: "logreg" ou "rf" — entraîné directement avec .fit(X, y) de sklearn.
-
-    TODO : retournez
-      - une `LogisticRegression(max_iter=1000)` si kind == "logreg"
-      - une `RandomForestClassifier(n_estimators=200, max_depth=12, random_state=42)`
-        si kind == "rf"
-      - levez une `ValueError` pour toute autre valeur de `kind`
-    """
-    raise NotImplementedError("TODO : implémentez make_kmer_classifier")
+    """kind: "logreg", "rf" ou "dt" — entraîné directement avec .fit(X, y) de sklearn."""
+    if kind == "logreg":
+        return LogisticRegression(max_iter=1000)
+    elif kind == "rf":
+        return RandomForestClassifier(n_estimators=200, max_depth=12, random_state=42)
+    elif kind in ("dt", "decision_tree"):
+        return DecisionTreeClassifier(max_depth=12, random_state=42)
+    else:
+        raise ValueError(f"Type de classifieur inconnu: '{kind}' (choisissez 'logreg', 'rf' ou 'dt')")
 
 
 class OneHotCNN(nn.Module):
@@ -32,18 +33,16 @@ class OneHotCNN(nn.Module):
 
     def __init__(self, seq_len: int, channels: int = 32):
         super().__init__()
-        # TODO : construisez self.net, un nn.Sequential avec :
-        #   Conv1d(4, channels, kernel_size=9, padding=4)
-        #   ReLU()
-        #   MaxPool1d(2)
-        #   Conv1d(channels, channels, kernel_size=9, padding=4)
-        #   ReLU()
-        #   AdaptiveAvgPool1d(1)
-        # puis self.head = nn.Linear(channels, 1)
-        raise NotImplementedError("TODO : construisez l'architecture du CNN")
+        self.net = nn.Sequential(
+            nn.Conv1d(4, channels, kernel_size=9, padding=4),
+            nn.ReLU(),
+            nn.MaxPool1d(2),
+            nn.Conv1d(channels, channels, kernel_size=9, padding=4),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool1d(1),
+        )
+        self.head = nn.Linear(channels, 1)
 
     def forward(self, x):  # x: (B, 4, L)
-        # TODO :
-        #   1. feats = self.net(x).squeeze(-1)   # (B, channels)
-        #   2. return self.head(feats).squeeze(-1)  # (B,) logits
-        raise NotImplementedError("TODO : implémentez le forward")
+        feats = self.net(x).squeeze(-1)   # (B, channels)
+        return self.head(feats).squeeze(-1)  # (B,) logits

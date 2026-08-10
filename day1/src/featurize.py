@@ -30,20 +30,20 @@ def _kmer_vocab(k: int):
 
 
 def kmer_frequencies(seq: str, k: int = 4) -> np.ndarray:
-    """Vecteur de fréquences de k-mers, normalisé (vocabulaire fixe de 4**k k-mers).
-
-    TODO :
-      1. Récupérez le vocabulaire avec `_kmer_vocab(k)` et construisez un dict
-         {kmer: index}.
-      2. Créez un vecteur de comptes de la bonne taille (np.zeros).
-      3. Parcourez toutes les sous-chaînes de longueur k de `seq` en glissant de 1 chaque fois,
-         et incrémentez le compte correspondant si le k-mer est dans le vocabulaire
-         (ignorez silencieusement les k-mers contenant un 'N' ou une base ambiguë —
-         ils ne seront simplement pas dans le vocabulaire).
-      4. Normalisez le vecteur par le nombre total de k-mers valides comptés (pas par
-         len(seq) !), pour obtenir une distribution de fréquences.
-    """
-    raise NotImplementedError("TODO : implémentez kmer_frequencies")
+    """Vecteur de fréquences de k-mers, normalisé (vocabulaire fixe de 4**k k-mers)."""
+    vocab = _kmer_vocab(k)
+    index = {kmer: i for i, kmer in enumerate(vocab)}
+    counts = np.zeros(len(vocab), dtype=np.float32)
+    n = 0
+    for i in range(len(seq) - k + 1):
+        kmer = seq[i:i + k]
+        idx = index.get(kmer)
+        if idx is not None:  # on ignore les k-mers contenant un N ou une base ambiguë
+            counts[idx] += 1
+            n += 1
+    if n > 0:
+        counts /= n
+    return counts
 
 
 def kmer_matrix(seqs, k: int = 4) -> np.ndarray:
@@ -54,15 +54,17 @@ def kmer_matrix(seqs, k: int = 4) -> np.ndarray:
 def one_hot(seq: str, length: int = None) -> np.ndarray:
     """Encode une séquence en one-hot -> forme (4, length), canaux = A, C, G, T.
 
-    TODO :
-      1. Si `length` n'est pas donné, utilisez len(seq).
-      2. Créez un tableau de zéros de forme (4, length).
-      3. Pour chaque position i (jusqu'à `length`), si la base est A/C/G/T, mettez
-         un 1 à la ligne correspondante, colonne i.
-      4. Les bases ambiguës (N, etc.) ou les positions au-delà de la séquence restent
-         à zéro (encodage "tout à zéro" — pas d'erreur à lever).
+    Les bases ambiguës (N, etc.) donnent une colonne entièrement à zéro. Les séquences
+    sont tronquées/complétées (avec des colonnes de zéros) à `length` si fourni.
     """
-    raise NotImplementedError("TODO : implémentez one_hot")
+    length = length or len(seq)
+    arr = np.zeros((4, length), dtype=np.float32)
+    base_to_idx = {b: i for i, b in enumerate(BASES)}
+    for i, base in enumerate(seq[:length]):
+        idx = base_to_idx.get(base)
+        if idx is not None:
+            arr[idx, i] = 1.0
+    return arr
 
 
 def one_hot_batch(seqs, length: int = None) -> np.ndarray:

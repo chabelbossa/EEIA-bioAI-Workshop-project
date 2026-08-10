@@ -23,17 +23,30 @@ def evaluate_logits(logits, labels, threshold=0.0):
     TODO : calculez `preds` en seuillant `logits` (> threshold -> 1, sinon 0),
     puis retournez {"accuracy": ..., "f1": ...} avec accuracy_score/f1_score.
     """
-    raise NotImplementedError("TODO : implémentez evaluate_logits")
+    if isinstance(logits, torch.Tensor):
+        logits = logits.detach().cpu().numpy()
+    if isinstance(labels, torch.Tensor):
+        labels = labels.detach().cpu().numpy()
+
+    preds = (logits > threshold).astype(int)
+    return {
+        "accuracy": float(accuracy_score(labels, preds)),
+        "f1": float(f1_score(labels, preds)),
+    }
 
 
 def evaluate_sklearn(model, X, y):
     """TODO : appelez model.predict(X), puis retournez {"accuracy": ..., "f1": ...}."""
-    raise NotImplementedError("TODO : implémentez evaluate_sklearn")
+    preds = model.predict(X)
+    return {
+        "accuracy": float(accuracy_score(y, preds)),
+        "f1": float(f1_score(y, preds)),
+    }
 
 
 def count_params(model: torch.nn.Module) -> int:
     """TODO : sommez model.parameters()[i].numel() pour tous les paramètres."""
-    raise NotImplementedError("TODO : implémentez count_params")
+    return sum(p.numel() for p in model.parameters())
 
 
 def measure_latency_torch(model, example_input, n_runs=100, device="cpu"):
@@ -47,10 +60,30 @@ def measure_latency_torch(model, example_input, n_runs=100, device="cpu"):
          (torch.no_grad()).
       4. Retournez (temps écoulé / n_runs) * 1000.0
     """
-    raise NotImplementedError("TODO : implémentez measure_latency_torch")
+    model = model.to(device).eval()
+    example_input = example_input.to(device)
+
+    with torch.no_grad():
+        for _ in range(5):  # warmup
+            _ = model(example_input)
+
+        start = time.perf_counter()
+        for _ in range(n_runs):
+            _ = model(example_input)
+        elapsed = time.perf_counter() - start
+
+    return (elapsed / n_runs) * 1000.0
 
 
 def measure_latency_sklearn(model, X, n_runs=100):
     """Même idée que measure_latency_torch, mais pour un estimateur sklearn
     (model.predict(X) au lieu de model(x))."""
-    raise NotImplementedError("TODO : implémentez measure_latency_sklearn")
+    for _ in range(5):  # warmup
+        _ = model.predict(X)
+
+    start = time.perf_counter()
+    for _ in range(n_runs):
+        _ = model.predict(X)
+    elapsed = time.perf_counter() - start
+
+    return (elapsed / n_runs) * 1000.0

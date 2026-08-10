@@ -1,0 +1,24 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.languageServer": "Jedi",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/day1/src",
+    "${workspaceFolder}/day2/src",
+    "${workspaceFolder}/day3/src",
+    "${workspaceFolder}/day4/src",
+    "${workspaceFolder}/day5/src"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.indexing": true,
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "on",
+    "strings": "on"
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.hover.enabled": "on",
+  "jupyter.notebookFileRoot": "${fileDirname}"
+}
+
+
+
