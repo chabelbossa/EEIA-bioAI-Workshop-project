@@ -1,26 +1,43 @@
-# Evo2 embedding dumps are single files of 100+ MB, past GitHub's file size
-# limit, so they live on Drive — see 2-data/embeddings/README.md
-# raw/ and processed/ stay in git: no individual file there exceeds 16 MB.
+# Large external artifacts
 2-data/embeddings/*
 !2-data/embeddings/README.md
+2-data/autoencoder/**
+!2-data/autoencoder/README.md
+2-data/probe/**
+!2-data/probe/README.md
+artifacts/
+*.onnx
+*.safetensors
 
+# Temporary workshop files
 data/autoencoder/
 temp_chunk_of_code_will_be_deleted/
 
 # Python
 __pycache__/
-*.pyc
-.ipynb_checkpoints/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
 venv/
 .venv/
+.ipynb_checkpoints/
 
-# Secrets
+# Local reports and caches
+reports/tmp/
+.cache/
+
+# Secrets and local environment
 .env
+.env.*
 *api_key*
+
+# Editors and operating systems
 .DS_Store
-2-data/autoencoder/**
-!2-data/autoencoder/README.md
-2-data/embeddings/**
-!2-data/embeddings/README.md
-2-data/probe/**
-!2-data/probe/README.md
+.vscode/*.local.json
+.idea/
