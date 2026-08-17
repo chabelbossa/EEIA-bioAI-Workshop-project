@@ -31,23 +31,17 @@ class TopKSparseAutoencoder(nn.Module):
         self.b_dec = nn.Parameter(torch.zeros(d_in))
 
     def encode(self, x):
-        """TODO :
-          1. f = ReLU(x @ self.W + self.b_enc)                      # (B, d_hidden)
-          2. values, indices = torch.topk(f, self.k, dim=-1)        # garder les k plus
-             grandes activations par exemple
-          3. sparse_f = torch.zeros_like(f)
-          4. return sparse_f.scatter_(-1, indices, values)          # remettre les valeurs
-             top-k à leur place, tout le reste à 0
-        """
-        raise NotImplementedError("TODO : implémentez encode")
+        f = F.relu(x @ self.W + self.b_enc)
+        values, indices = torch.topk(f, self.k, dim=-1)
+        sparse_f = torch.zeros_like(f)
+        return sparse_f.scatter(-1, indices, values)
 
     def decode(self, f):
-        """TODO : return f @ self.W.T + self.b_dec"""
-        raise NotImplementedError("TODO : implémentez decode")
+        return f @ self.W.T + self.b_dec
 
     def forward(self, x):
-        """TODO : f = self.encode(x) ; return self.decode(f), f"""
-        raise NotImplementedError("TODO : implémentez forward")
+        f = self.encode(x)
+        return self.decode(f), f
 
 
 def train_sae(sae, activations: torch.Tensor, epochs=10, lr=2e-4,
@@ -55,25 +49,42 @@ def train_sae(sae, activations: torch.Tensor, epochs=10, lr=2e-4,
     """activations: tenseur (N, d_in), déjà chargé/sous-échantillonné en mémoire — prévu
     pour quelques milliers à dizaines de milliers de vecteurs, pas le dump complet
     multi-Go.
-
-    TODO :
-      1. Placez `sae` sur `device`, créez un optimiseur Adam (lr=lr).
-      2. Pour chaque époque, mélangez les indices, puis pour chaque mini-lot :
-         - x = activations[indices du mini-lot].to(device)
-         - remettez les gradients à zéro
-         - x_hat, _ = sae(x)
-         - loss = F.mse_loss(x_hat, x)
-         - rétropropagez, faites un pas d'optimisation
-         - accumulez epoch_loss += loss.item() * x.shape[0]
-      3. Ajoutez la perte moyenne à history["recon_loss"]
-      4. Suivez aussi la santé du dictionnaire, et affichez-la toutes les
-         `log_every` époques :
-           - variance expliquée : 1 - recon_loss / activations.var()
-           - caractéristiques « vivantes » : part des colonnes de W activées au
-             moins une fois dans l'époque, via (f > 0).any(dim=0)
-         (une perte qui baisse pendant que 95 % du dictionnaire est mort, c'est un
-          SAE qui a échoué — la perte seule ne le dirait pas)
-      5. Retournez (sae, history)
     """
     history = {"recon_loss": [], "alive_frac": [], "explained_var": []}
-    raise NotImplementedError("TODO : implémentez train_sae")
+    sae = sae.to(device)
+    optimizer = torch.optim.Adam(sae.parameters(), lr=lr)
+    n_samples = activations.shape[0]
+    total_var = activations.var().item()
+
+    for epoch in range(1, epochs + 1):
+        perm = torch.randperm(n_samples)
+        epoch_loss = 0.0
+        feature_active = torch.zeros(sae.W.shape[1], dtype=torch.bool, device=device)
+
+        for i in range(0, n_samples, batch_size):
+            batch_indices = perm[i:i + batch_size]
+            x = activations[batch_indices].to(device)
+
+            optimizer.zero_grad()
+            x_hat, f = sae(x)
+            loss = F.mse_loss(x_hat, x)
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item() * x.shape[0]
+            feature_active |= (f > 0).any(dim=0)
+
+        mean_loss = epoch_loss / n_samples
+        explained_var = 1.0 - (mean_loss / total_var) if total_var > 0 else 0.0
+        alive_frac = feature_active.float().mean().item()
+
+        history["recon_loss"].append(mean_loss)
+        history["explained_var"].append(explained_var)
+        history["alive_frac"].append(alive_frac)
+
+        if epoch == 1 or epoch % log_every == 0 or epoch == epochs:
+            print(f"Epoch {epoch:02d}/{epochs:02d} | Loss: {mean_loss:.6f} | "
+                  f"Expl. Var: {explained_var:.4f} | Alive Features: {alive_frac * 100:.1f}%")
+
+    return sae, history
+

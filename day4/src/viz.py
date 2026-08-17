@@ -19,16 +19,29 @@ def plot_efficiency_tradeoff(results: dict):
     C'est le payoff du bilan du Jour 4 — tous les modèles construits pendant la semaine
     sur un seul graphique.
 
-    TODO :
-      1. Créez une figure/axe (plt.subplots(figsize=(7, 5))).
-      2. Calculez max_params = le plus grand "params" parmi tous les modèles de `results`.
-      3. Pour chaque (nom, r) dans results.items() :
-         - taille = 200 + 1800 * (r["params"] / max_params)
-         - ax.scatter(r["latency_ms"], r["accuracy"], s=taille, alpha=0.6, label=nom)
-         - ax.annotate(nom, (r["latency_ms"], r["accuracy"]),
-                       textcoords="offset points", xytext=(8, 4), fontsize=9)
-      4. Ajoutez xlabel ("Inference latency (ms/sample)"), ylabel ("Accuracy"),
-         titre ("Accuracy vs. Latency (bubble size = parameter count)"), une grille
-         légère (ax.grid(True, alpha=0.3)), puis affichez la figure.
+    La taille de chaque bulle représente le nombre de paramètres entraînables.
     """
-    raise NotImplementedError("TODO : implémentez plot_efficiency_tradeoff")
+    if not results:
+        raise ValueError("results ne doit pas être vide")
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    max_params = max(max(result["params"] for result in results.values()), 1)
+
+    for name, result in results.items():
+        bubble_size = 200 + 1800 * (result["params"] / max_params)
+        ax.scatter(
+            result["latency_ms"], result["accuracy"],
+            s=bubble_size, alpha=0.6, label=name,
+        )
+        ax.annotate(
+            name, (result["latency_ms"], result["accuracy"]),
+            textcoords="offset points", xytext=(8, 4), fontsize=9,
+        )
+
+    ax.set_xlabel("Inference latency (ms/sample)")
+    ax.set_ylabel("Accuracy")
+    ax.set_title("Accuracy vs. Latency (bubble size = parameter count)")
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    plt.show()
+    return fig, ax

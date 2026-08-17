@@ -14,6 +14,11 @@ from sklearn.metrics import accuracy_score, f1_score
 
 def evaluate_logits(logits, labels, threshold=0.0):
     """logits: scores bruts (seuil sigmoïde 0.5 == seuil de logit 0.0)."""
+    if isinstance(logits, torch.Tensor):
+        logits = logits.detach().cpu().numpy()
+    if isinstance(labels, torch.Tensor):
+        labels = labels.detach().cpu().numpy()
+
     preds = (logits > threshold).astype(int)
     return {
         "accuracy": accuracy_score(labels, preds),
