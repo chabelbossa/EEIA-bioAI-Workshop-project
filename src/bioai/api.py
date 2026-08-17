@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from contextlib import asynccontextmanager
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -26,10 +27,11 @@ class PredictionResponse(BaseModel):
     feature_version: str
 
 
+@dataclass(slots=True)
 class RuntimeState:
     model: StudentMLP | None = None
     threshold: float = 0.5
-    metadata: dict[str, Any] = {}
+    metadata: dict[str, Any] = field(default_factory=dict)
     error: str | None = None
 
 

@@ -13,8 +13,8 @@ The resulting vector has exactly 761 dimensions.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from functools import lru_cache
-from typing import Iterable, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
