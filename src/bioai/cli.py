@@ -48,6 +48,20 @@ def _build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--output", help="optional JSON report path")
     audit.set_defaults(handler=_handle_audit)
 
+    evaluate = subparsers.add_parser(
+        "evaluate",
+        help="evaluate a checkpoint on all rows and canonically-unseen rows",
+    )
+    evaluate.add_argument("--checkpoint", required=True)
+    evaluate.add_argument("--train", required=True, help="training CSV for overlap audit")
+    evaluate.add_argument("--evaluation", required=True, help="validation/test CSV")
+    evaluate.add_argument("--sequence-column", default="sequence")
+    evaluate.add_argument("--label-column", default="label")
+    evaluate.add_argument("--threshold", type=float)
+    evaluate.add_argument("--device", default="auto")
+    evaluate.add_argument("--output", help="optional JSON report path")
+    evaluate.set_defaults(handler=_handle_evaluate)
+
     predict = subparsers.add_parser("predict", help="predict with a versioned student")
     predict.add_argument("--checkpoint", required=True)
     predict.add_argument("--sequence", required=True)
@@ -93,6 +107,22 @@ def _handle_audit(args: argparse.Namespace) -> int:
         args.train,
         args.evaluation,
         sequence_column=args.sequence_column,
+    )
+    _json_dump(report.to_dict(), args.output)
+    return 0
+
+
+def _handle_evaluate(args: argparse.Namespace) -> int:
+    from .evaluation import evaluate_checkpoint_on_csv
+
+    report = evaluate_checkpoint_on_csv(
+        checkpoint=args.checkpoint,
+        train_csv=args.train,
+        evaluation_csv=args.evaluation,
+        sequence_column=args.sequence_column,
+        label_column=args.label_column,
+        threshold=args.threshold,
+        device=args.device,
     )
     _json_dump(report.to_dict(), args.output)
     return 0

@@ -60,3 +60,42 @@ def test_predict_command_uses_versioned_checkpoint(tmp_path, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["threshold"] == 0.265
     assert payload["checkpoint_metadata"] == {"seed": 42}
+
+
+def test_evaluate_command_writes_two_surfaces(tmp_path) -> None:
+    import pandas as pd
+
+    from bioai.model import StudentMLP, save_checkpoint
+
+    train = tmp_path / "train.csv"
+    evaluation = tmp_path / "evaluation.csv"
+    checkpoint = tmp_path / "student.pt"
+    output = tmp_path / "evaluation.json"
+    pd.DataFrame({"sequence": ["ATG" * 66 + "AT"], "label": [1]}).to_csv(
+        train, index=False
+    )
+    pd.DataFrame(
+        {
+            "sequence": ["ATG" * 66 + "AT", "ACG" * 66 + "AC"],
+            "label": [1, 0],
+        }
+    ).to_csv(evaluation, index=False)
+    save_checkpoint(checkpoint, StudentMLP())
+    assert main(
+        [
+            "evaluate",
+            "--checkpoint",
+            str(checkpoint),
+            "--train",
+            str(train),
+            "--evaluation",
+            str(evaluation),
+            "--device",
+            "cpu",
+            "--output",
+            str(output),
+        ]
+    ) == 0
+    payload = json.loads(output.read_text())
+    assert payload["total_rows"] == 2
+    assert payload["canonically_unseen_rows"] == 1
