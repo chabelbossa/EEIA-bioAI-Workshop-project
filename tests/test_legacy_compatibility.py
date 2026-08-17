@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import importlib.util
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 import numpy as np
@@ -16,9 +16,9 @@ LEGACY_PATH = Path("day3/src/advanced_features.py")
 
 @pytest.mark.skipif(not LEGACY_PATH.exists(), reason="legacy workshop module not available")
 def test_feature_vector_matches_legacy_implementation() -> None:
-    spec = importlib.util.spec_from_file_location("legacy_features", LEGACY_PATH)
+    spec = spec_from_file_location("legacy_features", LEGACY_PATH)
     assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
+    module = module_from_spec(spec)
     spec.loader.exec_module(module)
 
     sequence = "ATGCGTAC" * 25
