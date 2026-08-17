@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "feature_version": "codon-phase-761-v1",
+  "task": "coding-vs-non-coding",
+  "window_length": 200,
+  "model": {
+    "type": "StudentMLP",
+    "input_dim": 761,
+    "hidden_dim": 64,
+    "dropout": 0.2,
+    "trainable_parameters": 48961
+  },
+  "distillation": {
+    "alpha": 0.5,
+    "temperature": 1.0,
+    "teacher_folds": 5,
+    "group_column": "organism"
+  },
+  "selection": {
+    "epochs": 57,
+    "threshold": 0.265,
+    "seeds": [7, 42, 123]
+  },
+  "status": "configuration reconstructed from executed notebook outputs; test split unopened"
+}
