@@ -66,9 +66,7 @@ def audit_sequence_overlap(
     evaluation_canonical = {canonical_sequence(sequence) for sequence in evaluation}
 
     exact_rows = sum(sequence in train_exact for sequence in evaluation)
-    canonical_rows = sum(
-        canonical_sequence(sequence) in train_canonical for sequence in evaluation
-    )
+    canonical_rows = sum(canonical_sequence(sequence) in train_canonical for sequence in evaluation)
 
     return OverlapAudit(
         train_rows=len(train),

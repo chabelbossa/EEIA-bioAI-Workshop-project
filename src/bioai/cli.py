@@ -134,9 +134,7 @@ def _handle_predict(args: argparse.Namespace) -> int:
     model, checkpoint_threshold, metadata = load_checkpoint(args.checkpoint)
     threshold = checkpoint_threshold if args.threshold is None else args.threshold
     vector = advanced_features(args.sequence)[None, :]
-    probability = float(
-        predict_probabilities(model, vector, device=args.device).reshape(-1)[0]
-    )
+    probability = float(predict_probabilities(model, vector, device=args.device).reshape(-1)[0])
     _json_dump(
         {
             "probability_coding": probability,

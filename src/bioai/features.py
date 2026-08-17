@@ -106,8 +106,7 @@ def _strand_phase_features(sequence: str) -> tuple[FloatArray, FloatArray]:
 
     for phase in range(3):
         codons = [
-            sequence[position : position + 3]
-            for position in range(phase, len(sequence) - 2, 3)
+            sequence[position : position + 3] for position in range(phase, len(sequence) - 2, 3)
         ]
         valid_codons = 0
         for codon in codons:
@@ -154,9 +153,7 @@ def biological_phase_features(sequence: str) -> FloatArray:
 
     normalized = normalize_sequence(sequence)
     direct_codons, direct_summary = _strand_phase_features(normalized)
-    reverse_codons, reverse_summary = _strand_phase_features(
-        normalized.translate(COMPLEMENT)[::-1]
-    )
+    reverse_codons, reverse_summary = _strand_phase_features(normalized.translate(COMPLEMENT)[::-1])
 
     phase_base_frequencies = np.zeros((3, 4), dtype=np.float32)
     for phase in range(3):
