@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite this software using the metadata below after contributor validation."
+title: "Detection of coding regions in bacterial genomes with Evo2-assisted distillation"
+version: "1.0.0"
+date-released: "YYYY-MM-DD"
+type: software
+repository-code: "https://github.com/chabelbossa/EEIA-bioAI-Workshop-project"
+license: MIT
+authors:
+  # Replace this placeholder only after every participant has confirmed
+  # authorship, spelling and order. Supervisors/contributors may belong in
+  # separate CFF roles rather than the author list.
+  - name: "EEIA 2026 bioAI project authors — TO BE CONFIRMED"
+abstract: >-
+  Software and experiments for coding versus non-coding classification on
+  bacterial DNA windows, including Evo2 embeddings, grouped out-of-fold
+  knowledge distillation and a compact 761-feature student model.
