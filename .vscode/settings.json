@@ -17,8 +17,8 @@
   },
   "editor.suggestOnTriggerCharacters": true,
   "editor.hover.enabled": "on",
-  "jupyter.notebookFileRoot": "${fileDirname}"
+  "jupyter.notebookFileRoot": "${fileDirname}",
+  "colab.serverMounting": true,
+  "colab.terminal": true
 }
-
-
 
